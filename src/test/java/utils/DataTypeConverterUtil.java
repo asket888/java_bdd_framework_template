@@ -19,7 +19,7 @@ public class DataTypeConverterUtil {
         return prettyOutput;
     }
 
-    public List<String> convertWebElementListToStringList(List<WebElement> webElementList) {
+    public List<String> convertWebElementListToStringListByText(List<WebElement> webElementList) {
 
         final List<String> stringList = new ArrayList<>();
 
@@ -36,14 +36,38 @@ public class DataTypeConverterUtil {
         return stringList;
     }
 
-    public List<String> convertTrimStringList(List<String> dirtyList) {
+    public List<String> convertWebElementListToStringListByAttribute(
+            List<WebElement> webElementList, String attribute) {
 
         final List<String> stringList = new ArrayList<>();
 
-        for (String element: dirtyList) {
-            stringList.add(element.trim());
+        for (WebElement element: webElementList) {
+            stringList.add(element.getAttribute(attribute).trim());
         }
 
+        // remove from the list all empty/verification values
+        while(stringList.remove("Yes"));
+        while(stringList.remove("No"));
+        while(stringList.remove(" "));
+        while(stringList.remove(""));
+
         return stringList;
+    }
+
+    public boolean checkIfValueIsDouble(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean checkIfListHasNull(List<String> list) {
+        for(String element : list){
+            if(element == null)
+                return false;
+        }
+        return true;
     }
 }

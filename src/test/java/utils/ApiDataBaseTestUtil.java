@@ -1,6 +1,6 @@
 package utils;
 
-import steps.BaseTest;
+import steps.setup.BaseTest;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -64,6 +64,6 @@ public class ApiDataBaseTestUtil extends BaseTest {
 
     protected String deleteAllErrorCommands() {
 
-        return "DELETE FROM amc_commands WHERE command_state = 'ERROR'";
+        return "DELETE FROM amc_commands WHERE command_state = 'EXECUTION_SKIPPED' OR command_state = 'ERROR'";
     }
 }

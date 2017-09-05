@@ -6,7 +6,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openqa.selenium.Cookie;
-import steps.BaseTest;
+import steps.setup.BaseTest;
 
 import java.io.IOException;
 
@@ -14,78 +14,82 @@ import static utils.PropertyGetterUtil.getPropertyValue;
 
 public class ApiHttpRequTestUtil extends BaseTest {
 
-    private static HttpPost setPostRequest(
-            String endpointName, String certificateName, String jsonName, Cookie cookie) throws IOException {
+    // GET request-response for internal services with Cookie settings
+    private static String aspireServerUrl = getPropertyValue("aspire.server");
 
-        InputOutputUtil inputOutput = new InputOutputUtil();
+    private HttpGet setInternalServiceGetRequest(
+            String endpointPath, Cookie cookie) throws IOException {
 
-        HttpPost postRequest = new HttpPost(
-                getPropertyValue("db.server.url") + endpointName + "/" + certificateName);
-        postRequest.setHeader("Cookie", "GTSESSION=" + cookie.getValue());
+        HttpGet getRequest = new HttpGet(aspireServerUrl.concat(endpointPath));
+
+        getRequest.setHeader("Cookie", "GTSESSION=".concat(cookie.getValue()));
+        getRequest.setHeader("content-type", "application/json");
+        getRequest.setHeader("cache-control", "no-cache");
+
+        return getRequest;
+    }
+
+    public HttpResponse getInternalServiceGetResponse(String endpointPath, Cookie cookie) {
+
+        HttpResponse getResponse = null;
+
+        try {
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+
+            HttpGet getRequest = setInternalServiceGetRequest(endpointPath, cookie);
+
+            getResponse = httpClient
+                    .execute(getRequest);
+
+            System.out.println("Requesting from: " + getRequest.getURI());
+            System.out.println("Response code: " + getResponse.getStatusLine());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return getResponse;
+    }
+
+    // POST request-response for internal services with Cookie settings
+    private HttpPost setInternalServicePostRequest(
+            String endpointPath, String jsonPath, Cookie cookie) throws IOException {
+
+        HttpPost postRequest = new HttpPost(aspireServerUrl.concat(endpointPath));
+
+        postRequest.setHeader("Cookie", "GTSESSION=".concat(cookie.getValue()));
         postRequest.setHeader("content-type", "application/json");
         postRequest.setHeader("cache-control", "no-cache");
 
-        StringEntity entity = new StringEntity(inputOutput.jsonReader(
-                endpointName + "/" + certificateName + "_" + jsonName));
+        StringEntity entity = new StringEntity(jsonPath);
 
         postRequest.setEntity(entity);
 
         return postRequest;
     }
 
-    public static String getServiceResponseCode(String serviceUrl) {
+    public HttpResponse getInternalServicePostResponse(
+            String endpointPath, String jsonPath, Cookie cookie) {
 
-        String responseCode = null;
+        HttpResponse postResponse = null;
 
         try {
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
 
-            HttpGet getRequest = new HttpGet(serviceUrl);
-            System.out.println("Requesting from : " + getRequest.getURI());
+            HttpPost postRequest = setInternalServicePostRequest(endpointPath, jsonPath, cookie);
 
-            HttpResponse getResponse = httpClient.execute(getRequest);
-            responseCode = String
-                    .valueOf(getResponse
-                            .getStatusLine()
-                            .getStatusCode());
+            postResponse = httpClient
+                    .execute(postRequest);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return responseCode;
-    }
-
-    public static String getServiceResponceJsonBody(
-            String endpointName, String certificateName, String jsonName, Cookie cookie) {
-
-        String prettyJsonOutput = null;
-        String uglyJsonOutput = null;
-
-        try {
-
-            InputOutputUtil inputOutput = new InputOutputUtil();
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-
-            HttpResponse postResponse = httpClient
-                    .execute(setPostRequest(endpointName, certificateName, jsonName, cookie));
-
-            uglyJsonOutput = inputOutput
-                    .bufferReader(postResponse
-                            .getEntity()
-                            .getContent());
-
-            prettyJsonOutput = new DataTypeConverterUtil()
-                    .convertPrettyJsonOutput(uglyJsonOutput);
-
-//            System.out.println("Output from Server: " + prettyJsonOutput);
-
-            httpClient.getConnectionManager().shutdown();
+            System.out.println("Requesting from: " + postRequest.getURI());
+            System.out.println("Response code: " + postResponse.getStatusLine());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return prettyJsonOutput;
+        return postResponse;
     }
 }

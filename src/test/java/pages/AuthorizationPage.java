@@ -2,7 +2,7 @@ package pages;
 
 import locators.AuthorizationLocator;
 import org.openqa.selenium.By;
-import steps.BaseTest;
+import steps.setup.BaseTest;
 import utils.ElementManagementUtil;
 
 public class AuthorizationPage extends BaseTest implements AuthorizationLocator {

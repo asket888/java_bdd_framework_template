@@ -8,13 +8,6 @@ import java.util.Locale;
 
 public class DateTimeConverterUtil {
 
-    public static void main(String[] args) {
-
-        System.out.println(currentDay());
-        System.out.println(currentDate());
-        System.out.println(calculateDate(-3));
-    }
-
     public static String currentDay() {
 
         return new SimpleDateFormat("EEEE", Locale.ENGLISH)

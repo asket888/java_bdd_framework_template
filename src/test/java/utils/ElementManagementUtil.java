@@ -1,11 +1,12 @@
 package utils;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import steps.BaseTest;
+import steps.setup.BaseTest;
 
 import java.util.*;
 
@@ -14,16 +15,9 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClick
 public class ElementManagementUtil extends BaseTest {
 
     private DataTypeConverterUtil converterUtil = new DataTypeConverterUtil();
+    private final String LIBS_UPLOADS_FOLDER = System.getProperty("user.dir")+"\\libs\\uploads\\";
 
-    public Cookie getSessionCookies() {
-
-        Set<Cookie> cookies = driver.manage().getCookies();
-        Iterator<Cookie> itr = cookies.iterator();
-        Cookie cookie = itr.next();
-
-        return cookie;
-    }
-
+    // Page Elements Action methods
     public void elementIsVisible (By elementBy) {
 
         driverWait.until(ExpectedConditions.visibilityOfElementLocated(elementBy));
@@ -34,43 +28,86 @@ public class ElementManagementUtil extends BaseTest {
         driverWait.until(ExpectedConditions.invisibilityOfElementLocated(elementBy));
     }
 
-    public boolean isElementPresent(By by){
-
-        driver.findElement(by);
-        return true;
-    }
-
-    public void clickButton(By buttonBy) {
+    public void clickTheElement(By buttonBy) {
 
         driverWait.until(elementToBeClickable(buttonBy));
         driver.findElement(buttonBy).click();
     }
 
-    public void setSpecificValueIntoInput(By inputLocator, String value) {
+    public void moveCursorToElement(By elementBy) {
 
-        driverWait.until(ExpectedConditions.visibilityOfElementLocated(inputLocator));
-        driver.findElement(inputLocator).sendKeys(value);
+        elementIsVisible(elementBy);
+        driverActions.moveToElement(driver.findElement(elementBy)).perform();
     }
 
-    public void setSpecificValueIntoInputAfterClear (By inputLocator, String value) {
+    public void acceptBrowserAlert () {
 
-        driverWait.until(ExpectedConditions.visibilityOfElementLocated(inputLocator));
-        driver.findElement(inputLocator).clear();
-        driver.findElement(inputLocator).sendKeys(value);
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
     }
 
-    public List<String> getAllElementsFromPage(By elementBy) {
+    public boolean checkElementIsPresent(By by){
 
-        driverWait.until(ExpectedConditions.visibilityOfElementLocated(elementBy));
+        driver.findElement(by);
+        return true;
+    }
+
+
+    // Page Elements Getters methods
+    public Cookie getSessionCookies() {
+
+        Set<Cookie> cookies = driver.manage().getCookies();
+        Iterator<Cookie> itr = cookies.iterator();
+        Cookie cookie = itr.next();
+
+        return cookie;
+    }
+
+    public List<String> getAllElementsTextAsStringList(By elementBy) {
+
+        elementIsVisible(elementBy);
 
         List<WebElement> webElementList = driver
                 .findElements(elementBy);
 
         return converterUtil
-                .convertWebElementListToStringList(webElementList);
+                .convertWebElementListToStringListByText(webElementList);
     }
 
-    public List<String> getAllDataFromDropdown(By dropDownBy, By dropdownDataBy) {
+    public List<String> getAllElementsValueAsStringList(By elementBy) {
+
+        elementIsVisible(elementBy);
+
+        List<WebElement> webElementList = driver
+                .findElements(elementBy);
+
+        return converterUtil
+                .convertWebElementListToStringListByAttribute(webElementList, "value");
+    }
+
+    public String getOneElementTextAsString(By elementBy) {
+
+        elementIsVisible(elementBy);
+
+        WebElement webElement = driver
+                .findElement(elementBy);
+        String string = webElement.getText();
+
+        return string.trim();
+    }
+
+    public String getOneElementBackgroundAsString(By elementBy, String setAttribute) {
+
+        elementIsVisible(elementBy);
+
+        WebElement webElement = driver
+                .findElement(elementBy);
+
+        return webElement
+                .getCssValue(setAttribute);
+    }
+
+    public List<String> getAllValuesFromDropDownAsStringList(By dropDownBy, By dropdownDataBy) {
 
         driverWait.until(ExpectedConditions.visibilityOfElementLocated(dropDownBy));
         driver.findElement(dropDownBy).click();
@@ -79,50 +116,56 @@ public class ElementManagementUtil extends BaseTest {
 
         List<WebElement> webElementList = driver
                 .findElements(dropdownDataBy);
+        List<String> stringList = converterUtil
+                .convertWebElementListToStringListByText(webElementList);
 
-        return converterUtil
-                .convertWebElementListToStringList(webElementList);
+        return stringList;
     }
 
-    private Select getSelectElement(WebElement selectElement) {
-        return new Select(selectElement);
+
+    // Page Elements Setters methods
+    public void setValueIntoInputWithoutClear(By inputLocator, String value) {
+
+        elementIsVisible(inputLocator);
+        driver.findElement(inputLocator).sendKeys(value);
     }
 
-    public void setSpecificValueInDropDown(By dropDownBy, String value) {
+    public void setValueIntoInputAfterClear(By inputLocator, String value) {
+
+        elementIsVisible(inputLocator);
+        driver.findElement(inputLocator).clear();
+        driver.findElement(inputLocator).sendKeys(value);
+    }
+
+
+    public void setValueInDropDown(By dropDownBy, String value) {
 
         driverWait
                 .until(elementToBeClickable(dropDownBy));
-        getSelectElement(driver
+
+        new Select(driver
                 .findElement(dropDownBy)).selectByValue(value);
     }
 
-    public void setSpecificTextInDropDown(By dropDownBy, String text) {
+    public void setTextInDropDown(By dropDownBy, String text) {
 
         driverWait
                 .until(elementToBeClickable(dropDownBy));
-        getSelectElement(driver
+        new Select(driver
                 .findElement(dropDownBy)).selectByVisibleText(text);
     }
 
-    public void setSpecificIndexInDropdown(By dropDownBy, int index) {
+    public void setIndexInDropdown(By dropDownBy, int index) {
 
         driverWait
                 .until(elementToBeClickable(dropDownBy));
-        getSelectElement(driver
+        new Select(driver
                 .findElement(dropDownBy)).selectByIndex(index);
     }
 
-    public List<String> getErrorMessage(By elementBy) {
+    public void setFileUploadPathToElement(By elementBy, String fileName) {
 
-        driverWait
-                .until(ExpectedConditions.visibilityOfElementLocated(elementBy));
-
-        elementIsVisible(elementBy);
-        List<String> errorList = new ArrayList<>();
-        Collections.addAll(errorList, driver
-                .findElement(elementBy).getText());
-
-        return converterUtil
-                .convertTrimStringList(errorList);
+        WebElement fileInput = driver.findElement(elementBy);
+        fileInput.sendKeys(LIBS_UPLOADS_FOLDER  + fileName);
     }
 }
