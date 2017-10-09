@@ -1,4 +1,4 @@
-package steps;
+package steps.backend;
 
 
 import cucumber.api.java.en.Given;
@@ -14,7 +14,23 @@ public class BackEndSteps {
 
     private Cookie cookie = new ElementManagementUtil().getSessionCookies();
     private ServicesPage servicesPage = new ServicesPage();
+    private static String responseCode;
     private static String responseBody;
+
+    @Given("^Sent GET http request on External service \"([^\"]*)\"$")
+    public void userSendRequestToExternalServices(String serviceUrl) {
+
+        responseCode = servicesPage
+                .getExternalServiceGetResponseCode(serviceUrl);
+    }
+
+    @Then("^Receive response code \"([^\"]*)\" from External service$")
+    public void receiveResponseCodeFromExternalService(String expectedCode) {
+
+        System.out.println(responseCode);
+
+        Assert.assertEquals(expectedCode, responseCode);
+    }
 
     @Given("^Check Internal service endpoint \"([^\"]*)\" response \"([^\"]*)\"$")
     public void userSendRequestToInternalServicesByInstrumentType(String endpoint, String expectedElementType) {

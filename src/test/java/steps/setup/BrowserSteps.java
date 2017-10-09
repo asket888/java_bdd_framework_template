@@ -1,42 +1,25 @@
 package steps.setup;
 
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import org.openqa.selenium.*;
 import pages.AuthorizationPage;
-import steps.setup.BaseTest;
 
 import static utils.PropertyGetterUtil.getPropertyValue;
 
-public class BrowserSteps extends BaseTest {
+public class BrowserSteps extends BaseDriver {
 
-    @Given("^Start browser$")
-    public static void startBrowser() {
+    @Given("^Login into Application as SuperUser$")
+    public static void loginIntoAmcAsTrader() {
 
         getDriver();
-    }
 
-    @Given("^Open application main page$")
-    public static void openAppMainPage() {
-        try {
-            driver.navigate().to(getPropertyValue("app.server.url"));
-        } catch (UnhandledAlertException e) {
-            try {
-                Alert alert = driver.switchTo().alert();
-                alert.accept();
-            } catch (NoAlertPresentException ee) {
-                throw new PendingException("Some ugly alert breaks our test");
-            }
-        }
-    }
+        driver.navigate()
+                .to(getPropertyValue("app.server.url"));
 
-    @Then("^Login into system as Super user$")
-    public void loginIntoApp () {
-
-        new AuthorizationPage().loginIntoAmc(
+        new AuthorizationPage().loginIntoApp(
                 getPropertyValue("app.user.login"),
                 getPropertyValue("app.user.password"));
     }

@@ -1,6 +1,8 @@
 package steps.setup;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -21,6 +23,16 @@ public class BaseDriver {
     protected static WebDriverWait driverWait;
     protected static Actions driverActions;
     protected static JavascriptExecutor driverJsExecutor;
+
+    @BeforeClass
+    public static void initSelenium(){
+        getDriver();
+    }
+
+    @AfterClass
+    public static void closeSelenium(){
+        closeDriver();
+    }
 
     private static void setupDriver(String browserToUse){
 

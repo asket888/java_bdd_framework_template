@@ -6,20 +6,26 @@ import utils.ElementManagementUtil;
 
 public class MainMenuPage implements MainMenuLocator {
 
-    private ElementManagementUtil elementManagementUtil = new ElementManagementUtil();
+    private ElementManagementUtil elementManagement = new ElementManagementUtil();
 
     public void goToPage(String mainMenuTab, String pageLink) {
 
-        elementManagementUtil
+        elementManagement
                 .clickTheElement(getMenuTab(mainMenuTab));
-        elementManagementUtil
+        elementManagement
                 .clickTheElement(getPageLink(mainMenuTab, pageLink));
     }
 
     public void goToCertificatePage(String mainMenuTab) {
 
-        elementManagementUtil
+        elementManagement
                 .clickTheElement(getMenuTab(mainMenuTab));
+    }
+
+    public void checkCurrentPageName(String pageName) {
+
+        elementManagement
+                .elementIsVisible(checkPageTitle(pageName));
     }
 
     public static By getMenuTab(String mainMenuTab) {
@@ -72,7 +78,7 @@ public class MainMenuPage implements MainMenuLocator {
 
     public boolean checkIfPagePresent(String pageName) {
 
-        return elementManagementUtil
+        return elementManagement
                 .checkElementIsPresent(checkPageTitle(pageName));
     }
 

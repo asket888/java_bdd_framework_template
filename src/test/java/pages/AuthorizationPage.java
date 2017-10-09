@@ -2,21 +2,20 @@ package pages;
 
 import locators.AuthorizationLocator;
 import org.openqa.selenium.By;
-import steps.setup.BaseTest;
 import utils.ElementManagementUtil;
 
-public class AuthorizationPage extends BaseTest implements AuthorizationLocator {
+public class AuthorizationPage implements AuthorizationLocator {
 
-    private static ElementManagementUtil elementManagementUtil = new ElementManagementUtil();
+    private static ElementManagementUtil elementManagement = new ElementManagementUtil();
 
-    public void loginIntoAmc(String login, String password) {
+    public void loginIntoApp(String login, String password) {
 
-        elementManagementUtil
-                .setSpecificValueIntoInput(getAuthorizationLoginInput(), login);
-        elementManagementUtil
-                .setSpecificValueIntoInput(getAuthorizationPasswordInput(), password);
-        elementManagementUtil
-                .clickButton(getLoginButton());
+        elementManagement
+                .setValueIntoInputAfterClear(getAuthorizationLoginInput(), login);
+        elementManagement
+                .setValueIntoInputAfterClear(getAuthorizationPasswordInput(), password);
+        elementManagement
+                .clickTheElement(getLoginButton());
     }
 
     private static By getAuthorizationLoginInput() {

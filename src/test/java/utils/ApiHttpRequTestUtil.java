@@ -6,13 +6,36 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openqa.selenium.Cookie;
-import steps.setup.BaseTest;
+import steps.setup.BaseDriver;
 
 import java.io.IOException;
 
 import static utils.PropertyGetterUtil.getPropertyValue;
 
-public class ApiHttpRequTestUtil extends BaseTest {
+public class ApiHttpRequTestUtil extends BaseDriver {
+
+    // GET request-response for external services with No Cookie settings
+    public HttpResponse getExternalServiceGetResponse(String serviceUrl) {
+
+        HttpResponse getResponse = null;
+
+        try {
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+
+            HttpGet getRequest = new HttpGet(serviceUrl);
+
+            getResponse = httpClient
+                    .execute(getRequest);
+
+            System.out.println("Requesting from : " + getRequest.getURI());
+            System.out.println("Response code: " + getResponse.getStatusLine());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getResponse;
+    }
 
     // GET request-response for internal services with Cookie settings
     private static String aspireServerUrl = getPropertyValue("aspire.server");

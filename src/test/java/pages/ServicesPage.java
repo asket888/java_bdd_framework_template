@@ -10,7 +10,18 @@ import java.io.IOException;
 
 public class ServicesPage {
 
-    private ApiHttpRequTestUtil apiHttpRequTestUtil = new ApiHttpRequTestUtil();
+    private ApiHttpRequTestUtil apiHttpRequTest = new ApiHttpRequTestUtil();
+
+    public String getExternalServiceGetResponseCode(String endpointPath) {
+
+        String responseCode = String
+                .valueOf(apiHttpRequTest
+                        .getExternalServiceGetResponse(endpointPath)
+                        .getStatusLine()
+                        .getStatusCode());
+
+        return responseCode.trim();
+    }
 
     public String getInternalServiceGetResponseBody(String endpointPath, Cookie cookie) {
 
@@ -20,7 +31,7 @@ public class ServicesPage {
         try {
 
             responseBody = inputOutput
-                    .bufferReader(apiHttpRequTestUtil
+                    .bufferReader(apiHttpRequTest
                             .getInternalServiceGetResponse(endpointPath, cookie)
                             .getEntity()
                             .getContent());
@@ -63,7 +74,7 @@ public class ServicesPage {
 
         try {
             uglyJsonOutput = inputOutput
-                    .bufferReader(apiHttpRequTestUtil.getInternalServicePostResponse(endpointPath, jsonPath, cookie)
+                    .bufferReader(apiHttpRequTest.getInternalServicePostResponse(endpointPath, jsonPath, cookie)
                             .getEntity()
                             .getContent());
 

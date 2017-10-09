@@ -1,6 +1,6 @@
 package utils;
 
-import steps.setup.BaseTest;
+import steps.setup.BaseDriver;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 import static utils.PropertyGetterUtil.getPropertyValue;
 
-public class ApiDataBaseTestUtil extends BaseTest {
+public class ApiDataBaseTestUtil extends BaseDriver {
 
     private static String dbUrl = getPropertyValue("db.server.url");
     private static String login = getPropertyValue("db.user.login");

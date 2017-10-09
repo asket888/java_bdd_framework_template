@@ -6,13 +6,13 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import steps.setup.BaseTest;
+import steps.setup.BaseDriver;
 
 import java.util.*;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 
-public class ElementManagementUtil extends BaseTest {
+public class ElementManagementUtil extends BaseDriver {
 
     private DataTypeConverterUtil converterUtil = new DataTypeConverterUtil();
     private final String LIBS_UPLOADS_FOLDER = System.getProperty("user.dir")+"\\libs\\uploads\\";
